@@ -13,13 +13,26 @@ use winit::window::{Window, WindowAttributes, WindowId};
 
 #[derive(Default, Debug)]
 struct App {
-    window: Option<Arc<Window>>,
+    window: Option<Arc<dyn Window>>,
 }
 
 impl ApplicationHandler for App {
-    fn resumed(&mut self, event_loop: &ActiveEventLoop) {
-        let init_window = || -> anyhow::Result<Arc<Window>> {
-            let window = Arc::new(event_loop.create_window(WindowAttributes::default())?);
+    fn window_event(
+        &mut self,
+        event_loop: &dyn ActiveEventLoop,
+        _window_id: WindowId,
+        event: WindowEvent,
+    ) {
+        match event {
+            WindowEvent::CloseRequested => event_loop.exit(),
+            _ => (),
+        }
+    }
+
+    fn can_create_surfaces(&mut self, event_loop: &dyn ActiveEventLoop) {
+        let init_window = || -> anyhow::Result<Arc<dyn Window>> {
+            let window: Arc<dyn Window> =
+                Arc::from(event_loop.create_window(WindowAttributes::default())?);
 
             let instance = InstanceBuilder::new(Some(window.clone()))
                 .app_name("Example Vulkan Application")
@@ -55,18 +68,6 @@ impl ApplicationHandler for App {
             panic!("Could not initialize window")
         }
     }
-
-    fn window_event(
-        &mut self,
-        event_loop: &ActiveEventLoop,
-        _window_id: WindowId,
-        event: WindowEvent,
-    ) {
-        match event {
-            WindowEvent::CloseRequested => event_loop.exit(),
-            _ => (),
-        }
-    }
 }
 
 fn main() -> anyhow::Result<()> {
@@ -76,8 +77,8 @@ fn main() -> anyhow::Result<()> {
         .init();
 
     let event_loop = EventLoop::new()?;
-    let mut app = App::default();
-    event_loop.run_app(&mut app)?;
+    let app = App::default();
+    event_loop.run_app(app)?;
 
     Ok(())
 }

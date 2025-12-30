@@ -29,7 +29,7 @@ struct FrameData {
 
 #[derive(Debug)]
 struct VulkanEngine {
-    window: Arc<Window>,
+    window: Arc<dyn Window>,
     instance: Arc<Instance>,
     device: Arc<Device>,
     swapchain: Swapchain,
@@ -42,7 +42,7 @@ struct VulkanEngine {
 }
 
 impl VulkanEngine {
-    pub fn new(window: Arc<Window>) -> anyhow::Result<Self> {
+    pub fn new(window: Arc<dyn Window>) -> anyhow::Result<Self> {
         let instance = InstanceBuilder::new(Some(window.clone()))
             .app_name("vk-guide example")
             .engine_name("vulkanalia-bootstrap")
@@ -69,7 +69,7 @@ impl VulkanEngine {
 
         let (graphics_queue_index, graphics_queue) = device.get_queue(QueueType::Graphics)?;
 
-        let window_extent = window.inner_size();
+        let window_extent = window.as_ref().surface_size();
 
         let swapchain_builder = SwapchainBuilder::new(instance.clone(), device.clone())
             .desired_format(
@@ -323,9 +323,9 @@ struct App {
 }
 
 impl ApplicationHandler for App {
-    fn resumed(&mut self, event_loop: &ActiveEventLoop) {
+    fn can_create_surfaces(&mut self, event_loop: &dyn ActiveEventLoop) {
         let init_vulkan = || -> anyhow::Result<VulkanEngine> {
-            let window = Arc::new(event_loop.create_window(WindowAttributes::default())?);
+            let window = Arc::from(event_loop.create_window(WindowAttributes::default())?);
 
             VulkanEngine::new(window)
         };
@@ -342,7 +342,7 @@ impl ApplicationHandler for App {
 
     fn window_event(
         &mut self,
-        event_loop: &ActiveEventLoop,
+        event_loop: &dyn ActiveEventLoop,
         _window_id: WindowId,
         event: WindowEvent,
     ) {
@@ -406,8 +406,8 @@ fn main() -> anyhow::Result<()> {
         .init();
 
     let event_loop = EventLoop::new()?;
-    let mut app = App::default();
-    event_loop.run_app(&mut app)?;
+    let app = App::default();
+    event_loop.run_app(app)?;
 
     Ok(())
 }

@@ -11,6 +11,7 @@ use vulkanalia::vk::{
 };
 use vulkanalia::vk::{AllocationCallbacks, DebugUtilsMessengerEXT};
 use vulkanalia::{Version, window as vk_window};
+use winit::window::Window;
 
 pub trait WindowTraits: HasDisplayHandle + HasWindowHandle + Debug {}
 impl<T> WindowTraits for T where T: HasDisplayHandle + HasWindowHandle + Debug {}
@@ -101,11 +102,11 @@ pub struct InstanceBuilder {
     use_debug_messenger: bool,
     headless_context: bool,
 
-    window: Option<Arc<dyn WindowTraits>>,
+    window: Option<Arc<dyn Window>>,
 }
 
 impl InstanceBuilder {
-    pub fn new(window: Option<Arc<dyn WindowTraits>>) -> Self {
+    pub fn new(window: Option<Arc<dyn Window>>) -> Self {
         Self {
             app_name: "".to_string(),
             engine_name: "".to_string(),
@@ -397,7 +398,7 @@ Application info: {{
         if !self.headless_context {
             if let Some(window) = self.window.clone() {
                 let surface_extensions: Vec<vk::ExtensionName> =
-                    vk_window::get_required_instance_extensions(window.as_ref())
+                    vk_window::get_required_instance_extensions(window.rwh_06_window_handle())
                         .into_iter()
                         .map(|ext| **ext)
                         .collect();
@@ -508,7 +509,11 @@ Application info: {{
         let mut surface = None;
         if let Some(window) = self.window.clone() {
             surface = Some(unsafe {
-                vk_window::create_surface(&instance, window.as_ref(), window.as_ref())?
+                vk_window::create_surface(
+                    &instance,
+                    window.rwh_06_display_handle(),
+                    window.rwh_06_window_handle(),
+                )?
             });
             #[cfg(feature = "enable_tracing")]
             tracing::info!("Created vkSurfaceKhr")

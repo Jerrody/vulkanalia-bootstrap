@@ -25,13 +25,13 @@ keywords = ["vulkan", "vulkanalia", "bindings", "gamedev", "rendering"]
 thiserror = "2.0.17"
 raw-window-handle = { version = "0.6.2" }
 tracing = { version = "0.1.41", optional = true }
-vulkanalia = { version = "0.32.0", features = ["libloading", "window"] }
+vulkanalia = { version = "0.34.0", features = ["libloading", "window"] }
 libloading = "0.8.8"
+winit = "=0.31.0-beta.2"
 
 [dev-dependencies]
 anyhow = "1.0.99"
 tracing-subscriber = { version = "0.3.20", features = ["env-filter"] }
-winit = "0.30.12"
 
 [package.metadata.docs.rs]
 all-features = true
