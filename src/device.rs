@@ -1516,8 +1516,8 @@ impl DeviceBuilder {
 #[derive(Debug)]
 pub struct Device {
     instance: Arc<Instance>,
-    device: vulkanalia::Device,
-    physical_device: PhysicalDevice,
+    pub device: vulkanalia::Device,
+    pub physical_device: PhysicalDevice,
     surface: Option<vk::SurfaceKHR>,
     allocation_callbacks: Option<AllocationCallbacks>,
 }

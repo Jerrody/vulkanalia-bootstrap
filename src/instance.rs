@@ -13,9 +13,6 @@ use vulkanalia::vk::{AllocationCallbacks, DebugUtilsMessengerEXT};
 use vulkanalia::{Version, window as vk_window};
 use winit::window::Window;
 
-pub trait WindowTraits: HasDisplayHandle + HasWindowHandle + Debug {}
-impl<T> WindowTraits for T where T: HasDisplayHandle + HasWindowHandle + Debug {}
-
 unsafe extern "system" fn vulkan_debug_callback(
     message_severity: vk::DebugUtilsMessageSeverityFlagsEXT,
     message_type: vk::DebugUtilsMessageTypeFlagsEXT,
@@ -534,7 +531,7 @@ Application info: {{
 
 #[derive(Debug)]
 pub struct Instance {
-    pub(crate) instance: vulkanalia::Instance,
+    pub instance: vulkanalia::Instance,
     pub(crate) allocation_callbacks: Option<AllocationCallbacks>,
     pub(crate) surface: Option<vk::SurfaceKHR>,
     pub(crate) instance_version: Version,
