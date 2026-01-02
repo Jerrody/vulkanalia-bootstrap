@@ -196,7 +196,7 @@ pub enum Suitable {
 #[derive(Default, Debug)]
 pub struct PhysicalDevice {
     name: String,
-    physical_device: vk::PhysicalDevice,
+    pub physical_device: vk::PhysicalDevice,
     surface: Option<vk::SurfaceKHR>,
 
     features: vk::PhysicalDeviceFeatures,
