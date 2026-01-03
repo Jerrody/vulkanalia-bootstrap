@@ -10,7 +10,7 @@ use std::sync::Arc;
 use vulkanalia::Version;
 use vulkanalia::vk::{
     self, DeviceV1_0, ExtensionName, HasBuilder, InstanceV1_0, InstanceV1_1,
-    KhrSurfaceExtensionInstanceCommands, PhysicalDeviceVulkan12Features,
+    KhrSurfaceExtensionInstanceCommands,
 };
 use vulkanalia::vk::{AllocationCallbacks, DeviceV1_1};
 
@@ -1436,11 +1436,7 @@ impl DeviceBuilder {
     ///   different priorities or explicit queue counts.
     /// - Any allocation callbacks previously set via `DeviceBuilder::allocation_callbacks`
     ///   are forwarded to `vkCreateDevice` and stored in the returned `Device`.
-    pub fn build(
-        mut self,
-        required_extensions: &[ExtensionName],
-        mut required_features: PhysicalDeviceVulkan12Features,
-    ) -> crate::Result<Device> {
+    pub fn build(mut self) -> crate::Result<Device> {
         // TODO: custom queue setup
         // (index, priorities)
         let queue_descriptions = self
@@ -1473,10 +1469,6 @@ impl DeviceBuilder {
             extensions_to_enable.push(vk::KHR_SWAPCHAIN_EXTENSION.name.as_ptr());
         }
 
-        required_extensions.iter().for_each(|required_extension| {
-            extensions_to_enable.push(required_extension.as_ptr());
-        });
-
         let mut device_create_info = vk::DeviceCreateInfo::builder()
             .queue_create_infos(&queue_create_infos)
             .enabled_extension_names(&extensions_to_enable);
@@ -1505,7 +1497,6 @@ impl DeviceBuilder {
                 }
             }
         }
-        device_create_info.push_next(&mut required_features);
 
         let device = unsafe {
             self.instance.instance.create_device(
