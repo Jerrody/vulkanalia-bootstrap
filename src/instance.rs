@@ -1,4 +1,5 @@
 use crate::system_info::{DEBUG_UTILS_EXT_NAME, SystemInfo, VALIDATION_LAYER_NAME};
+use raw_window_handle::{HasDisplayHandle, HasWindowHandle};
 use std::borrow::Cow;
 use std::ffi;
 use std::ffi::c_void;
