@@ -930,10 +930,12 @@ impl PhysicalDeviceSelector {
         self
     }
 
-    pub fn add_required_extension_name(mut self, extension_name: ExtensionName) {
+    pub fn add_required_extension_name(mut self, extension_name: ExtensionName) -> Self {
         self.selection_criteria
             .required_extensions
             .insert(extension_name);
+
+        self
     }
 
     /// Add an additional device feature (vulkan feature2 struct) that must be supported by
