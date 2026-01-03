@@ -9,7 +9,8 @@ use std::ops::Deref;
 use std::sync::Arc;
 use vulkanalia::Version;
 use vulkanalia::vk::{
-    self, DeviceV1_0, HasBuilder, InstanceV1_0, InstanceV1_1, KhrSurfaceExtensionInstanceCommands,
+    self, DeviceV1_0, ExtensionName, HasBuilder, InstanceV1_0, InstanceV1_1,
+    KhrSurfaceExtensionInstanceCommands,
 };
 use vulkanalia::vk::{AllocationCallbacks, DeviceV1_1};
 
@@ -927,6 +928,12 @@ impl PhysicalDeviceSelector {
     pub fn surface(mut self, surface: vk::SurfaceKHR) -> Self {
         self.surface.replace(surface);
         self
+    }
+
+    pub fn add_required_extension_name(mut self, extension_name: ExtensionName) {
+        self.selection_criteria
+            .required_extensions
+            .insert(extension_name);
     }
 
     /// Add an additional device feature (vulkan feature2 struct) that must be supported by
