@@ -1436,11 +1436,7 @@ impl DeviceBuilder {
     ///   different priorities or explicit queue counts.
     /// - Any allocation callbacks previously set via `DeviceBuilder::allocation_callbacks`
     ///   are forwarded to `vkCreateDevice` and stored in the returned `Device`.
-    pub fn build(
-        mut self,
-        required_extensions: &[ExtensionName],
-        mut required_features: PhysicalDeviceVulkan12Features,
-    ) -> crate::Result<Device> {
+    pub fn build(mut self, required_extensions: &[ExtensionName]) -> crate::Result<Device> {
         // TODO: custom queue setup
         // (index, priorities)
         let queue_descriptions = self
@@ -1505,7 +1501,6 @@ impl DeviceBuilder {
                 }
             }
         }
-        device_create_info.push_next(&mut required_features);
 
         let device = unsafe {
             self.instance.instance.create_device(

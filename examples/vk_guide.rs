@@ -65,7 +65,10 @@ impl VulkanEngine {
             .add_required_extension_feature(*features13)
             .select()?;
 
-        let device = Arc::new(DeviceBuilder::new(physical_device, instance.clone()).build()?);
+        let extension_names = [];
+        let device = Arc::new(
+            DeviceBuilder::new(physical_device, instance.clone()).build(&extension_names)?,
+        );
 
         let (graphics_queue_index, graphics_queue) = device.get_queue(QueueType::Graphics)?;
 
